@@ -527,6 +527,8 @@ df$monthly_discount[is.na(df$monthly_discount)]=0
 df$weekly_discount<-scale(df$weekly_discount)
 df$monthly_discount<-scale(df$monthly_discount)
 
+typeandna(df$weekly_discount)
+
 nrow(df) # 12208
 selected <- add('monthly_discount')
 selected <- add('weekly_discount')
@@ -536,84 +538,149 @@ selected <- add('weekly_suitable')
 #---Queenie------------------------
 #Importing the libraries
 library(stringr)
-for (i in c(1:length(df$amenities))){
-  am1 <- gsub("[^A-Za-z0-9]", ",", df$amenities[i])
-  df$new_amenities[i] <- str_replace(am1, "\\,", "")
-  # df$new_amenities[i] <- str_replace_all(ame2, "\\?", "") 
-}
+#----------------------------------------------------------------------------
+#24-hour-check-in
+df$CheckIn24 <- ifelse(str_detect((df$amenities),"24-hour check-in")==TRUE,1,0)
+df$CheckIn24 <- impute(df$CheckIn24, roundup =  TRUE) # impute 2NAs with mode from test data
+check(df$CheckIn24)
 
-#View(df)
-## Internet/Wifi/Wireless
-df$Internet <- ifelse(str_detect(tolower(df$new_amenities),"internet|wifi|wireless")==TRUE, 1, 0)
-
-## Kitchen/Dishes/Dish washer/Cooking
-df$Cooking <- ifelse(str_detect(tolower(df$new_amenities),"kitchen|dishes|cooking")==TRUE, 1, 0)
+df$air_conditioning<- ifelse(str_detect((df$amenities),"Air conditioning|Central air conditioning")==TRUE,1,0)
+df$air_conditioning <- impute(df$air_conditioning, roundup =  TRUE) # impute 2NAs with mode from test data
+check(df$air_conditioning)
 
 
-## Detector
-df$Detector <- ifelse(str_detect(tolower(df$new_amenities),"smoke|extinguisher|detector")==TRUE, 1, 0)
-df$Detector <- impute(df$Detector, roundup =  TRUE) # impute 2NAs with mode from test data
+df$high_end_electronics <- ifelse(str_detect((df$amenities),"Amazon Echo|Apple TV|Game console|Netflix|Projector and screen|Smart TV")==TRUE,1,0)
+df$high_end_electronics <- impute(df$high_end_electronics, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Smoking Allowed
-df$SmokingAllowed <- ifelse(str_detect(tolower(df$new_amenities),"smoking")==TRUE, 1, 0)
-df$SmokingAllowed <- impute(df$SmokingAllowed, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Essentials
-df$Essentials <- ifelse(str_detect(tolower(df$new_amenities),"essentials")==TRUE,1,0)
 
-## Lock
-df$Lock <- ifelse(str_detect(tolower(df$new_amenities),"lock|lockbox")==TRUE,1,0)
+df$bbq <- ifelse(str_detect((df$amenities),"BBQ grill|Fire pit|Propane barbeque")==TRUE,1,0)
+df$bbq <- impute(df$bbq, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Parking
-df$Parking <- ifelse(str_detect(tolower(df$new_amenities),"parking")==TRUE,1,0)
 
-## Air_conditioning
-df$Air_conditioning <- ifelse(str_detect(tolower(df$new_amenities),"conditioning")==TRUE,1,0)
+df$balcony <- ifelse(str_detect((df$amenities),"Balcony|Patio")==TRUE,1,0)
+df$balcony <- impute(df$balcony, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Wokspace
-df$Workspace <- ifelse(str_detect(tolower(df$new_amenities),"workspace")==TRUE,1,0)
 
-## Elevator
-df$Elevator <- ifelse(str_detect(tolower(df$new_amenities),"elevator")==TRUE,1,0)
+df$nature_and_views <- ifelse(str_detect((df$amenities),"Beach view|Beachfront|Lake access|Mountain view|Ski-in/Ski-out|Waterfront")==TRUE,1,0)
+df$nature_and_views <- impute(df$nature_and_views, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Gym
-df$Gym <- ifelse(str_detect(tolower(df$new_amenities),"gym")==TRUE,1,0)
 
-## Refrigerator
-df$Refrigerator <- ifelse(str_detect(tolower(df$new_amenities),"refrigerator")==TRUE,1,0)
+df$bed_linen <- ifelse(str_detect((df$amenities),"Bed linens")==TRUE,1,0)
+df$bed_linen <- impute(df$bed_linen, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Stove
-df$Stove <- ifelse(str_detect(tolower(df$new_amenities),"stove")==TRUE,1,0)
 
-## Check
-df$Check <- ifelse(str_detect(tolower(df$new_amenities),"24|check")==TRUE,1,0)
+df$breakfast <- ifelse(str_detect((df$amenities),"Breakfast")==TRUE,1,0)
+df$breakfast <- impute(df$breakfast, roundup =  TRUE) # impute 2NAs with mode from test data
 
-## Family
-df$Family <- ifelse(str_detect(tolower(df$new_amenities),"kid|family")==TRUE,1,0)
 
-selected <- add('Family')
-selected <- add('Check')
-selected <- add('Stove')
-selected <- add('Refrigerator')
-selected <- add('Gym')
-selected <- add('Elevator')
-selected <- add('Workspace')
-selected <- add('Air_conditioning')
-selected <- add('Parking')
-selected <- add('Lock')
-selected <- add('Essentials')
-selected <- add('Detector')
-selected <- add('SmokingAllowed')
-selected <- add('Cooking')
-selected <- add('Internet')
+df$tv <- ifelse(str_detect((df$amenities),"TV")==TRUE,1,0)
+df$tv <- impute(df$tv, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+df$coffee_machine <- ifelse(str_detect((df$amenities),"Coffee maker|Espresso machine")==TRUE,1,0)
+df$coffee_machine <- impute(df$coffee_machine, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+df$kitchen <- ifelse(str_detect((df$amenities),"Cooking basics|kitchen|dishes|cooking")==TRUE,1,0)
+df$kitchen <- impute(df$kitchen, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+df$white_goods <- ifelse(str_detect((df$amenities),"Dishwasher|Dryer|Washer")==TRUE,1,0)
+df$white_goods <- impute(df$white_goods, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+df$elevator <- ifelse(str_detect((df$amenities),"Elevator")==TRUE,1,0)
+df$elevator <- impute(df$elevator, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+df$gym <- ifelse(str_detect((df$amenities),"Exercise equipment|Gym|gym")==TRUE,1,0)
+df$gym <- impute(df$gym, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+df$child_friendly <- ifelse(str_detect((df$amenities),"Family/kid friendly|Children|children")==TRUE,1,0)
+df$child_friendly <- impute(df$child_friendly, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$parking <- ifelse(str_detect((df$amenities),"parking")==TRUE,1,0)
+df$parking <- impute(df$parking, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$outdoor_space <- ifelse(str_detect((df$amenities),"Garden|Outdoor|Sun loungers|Terrace")==TRUE,1,0)
+df$outdoor_space <- impute(df$outdoor_space, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$host_greeting <- ifelse(str_detect((df$amenities),"Host greets you")==TRUE,1,0)
+df$host_greeting <- impute(df$host_greeting, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$hottub_sauna_pool <- ifelse(str_detect((df$amenities),"Hot tub|Jetted tub|hot tub|Sauna|Pool|pool")==TRUE,1,0)
+df$hottub_sauna_pool <- impute(df$hottub_sauna_pool, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$internet <- ifelse(str_detect((df$amenities),"Internet|Pocket wifi|Wifi|Wireless")==TRUE,1,0)
+df$internet <- impute(df$internet, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$long_term_Stay_allowed <- ifelse(str_detect((df$amenities),"Long term stays allowed")==TRUE,1,0)
+df$long_term_Stay_allowed <- impute(df$long_term_Stay_allowed, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$pets_allowed <- ifelse(str_detect((df$amenities),"Pets|pet|Cat(s)|Dog(s)")==TRUE,1,0)
+df$pets_allowed <- impute(df$pets_allowed, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$private_entrance <- ifelse(str_detect((df$amenities),"Private entrance")==TRUE,1,0)
+df$private_entrance <- impute(df$private_entrance, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$secure <- ifelse(str_detect((df$amenities),"Safe|Security system|Lock")==TRUE,1,0)
+df$secure <- impute(df$secure, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$self_check_in <- ifelse(str_detect((df$amenities),"Self check-in")==TRUE,1,0)
+df$self_check_in <- impute(df$self_check_in, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$smoking_allowed <- ifelse(str_detect((df$amenities),"Smoking allowed")==TRUE,1,0)
+df$smoking_allowed <- impute(df$smoking_allowed, roundup =  TRUE) # impute 2NAs with mode from test data
+check(df$smoking_allowed)
+df$accessible <- ifelse(str_detect((df$amenities),"Step-free access|Wheelchair|Accessible")==TRUE,1,0)
+df$accessible <- impute(df$accessible, roundup =  TRUE) # impute 2NAs with mode from test data
+
+df$event_suitable <- ifelse(str_detect((df$amenities),"Suitable for events")==TRUE,1,0)
+df$event_suitable <- impute(df$event_suitable, roundup =  TRUE) # impute 2NAs with mode from test data
+
+
+selected <- add('CheckIn24')
+selected <- add('air_conditioning')
+selected <- add('high_end_electronics')
+selected <- add('bbq')
+selected <- add('balcony')
+selected <- add('nature_and_views')
+selected <- add('bed_linen')
+selected <- add('breakfast')
+selected <- add('tv')
+selected <- add('coffee_machine')
+selected <- add('kitchen')
+selected <- add('white_goods')
+selected <- add('elevator')
+selected <- add('gym')
+selected <- add('child_friendly')
+selected <- add('parking')
+selected <- add('outdoor_space')
+selected <- add('host_greeting')
+selected <- add('hottub_sauna_pool')
+selected <- add('internet')
+selected <- add('long_term_Stay_allowed')
+selected <- add('pets_allowed')
+selected <- add('private_entrance')
+selected <- add('secure')
+selected <- add('self_check_in')
+selected <- add('smoking_allowed')
+selected <- add('accessible')
+selected <- add('event_suitable')
 
 
 # house_rules
 df$rules <- ifelse(is.na(df$house_rules)== FALSE, 1, 0)
+typeandna(df$rules)
+check(df$rules)
 selected <- add('rules')
 
 # interaction
 df$interaction <- ifelse(is.na(df$interaction)== FALSE, 1, 0)
+typeandna(df$interaction)
+check(df$interaction)
 selected <- add('interaction')
 
 
@@ -652,6 +719,8 @@ df$flexible <- (flexible$bike+flexible$bus+flexible$buses
                 +flexible$metro+flexible$line+flexible$lines+flexible$subway
                 +flexible$train+flexible$trains+flexible$transportation)
 
+typeandna(df$flexible)
+check(df$flexible)
 selected <- add('flexible')
 
 
@@ -662,10 +731,12 @@ df$availability_30 <- impute(df$availability_30)
 df$availability_60 <- impute(df$availability_60)
 df$availability_90 <- impute(df$availability_90)
 
-
+check(df$availability_30)
 #Adding the interaction terms:
+typeandna(df$price)
 df$price_propertyApartment <-df$price*df$propertyApartment
 df$price_roomPrivate_room <- df$price*df$roomPrivate_room
+
 
 selected<-add("price_propertyApartment")
 selected<-add("price_roomPrivate_room")
@@ -698,7 +769,6 @@ df$city_centrality <- ifelse(str_detect(df$neighborhood_overview,regex("center|c
 df$city_centrality <- impute(df$city_centrality, value =  0) # impute 2NAs with mode from test data
 sum(is.na(df$city_centrality))
 
-
 #Adding latitude and longitude
 df$latitude <- impute(df$latitude)
 df$longitude <- impute(df$longitude)
@@ -718,6 +788,7 @@ selected <- add("security_deposit")
 #Adding maximum_nights
 df$maximum_nights <- impute(df$maximum_nights)
 check(df$maximum_nights)
+typeandna(df$maximum_nights)
 selected <- add("maximum_nights")
 
 
@@ -734,5 +805,5 @@ export_train[c('monthly_discount', 'weekly_discount')] <- sapply(export_train[c(
 
 
 # which(is.na(export_train), arr.ind=TRUE)
-write.csv(export_train, file="train_cleaned20.csv", row.names = FALSE) #Write dataframe as CSV
+write.csv(export_train, file="train_cleaned_1.csv", row.names = FALSE) #Write dataframe as CSV
 
