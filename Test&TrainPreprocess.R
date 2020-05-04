@@ -34,14 +34,18 @@ df_whole <- smartbind(df, df_test)
 nrow(df_whole) #112208
 
 #write.csv(df_whole,file = "df_whole.csv",row.names = FALSE)
-
+colnames(df_whole)
+View(df_whole)
 df_whole$density_10bins <- cut(df_whole$density, 10, include.lowest=TRUE, labels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 # convert data type
 df_whole$density_bins <- as.factor(df_whole$density_bins) # convert to factor
 df_whole$high_booking_rate <- as.factor(df_whole$high_booking_rate)
 
-df <- df_whole
+library(stringr)
+(which(str_detect(rownames(df_whole),"2:")))
 
+df_train <-df_whole[which(str_detect(rownames(df_whole),"2:")),]
+nrow(df_train)
 #one hot encode these
 df$density_10bins0 <- ifelse(df$density_10bins == 0,1,0)
 df$density_10bins1 <- ifelse(df$density_10bins == 1,1,0)
