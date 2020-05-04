@@ -8,44 +8,56 @@ library(ngram)
 library(stringr)
 library(maxent)
 
+setwd("")
+
 #training set
 #read data col_types = cols(zipcode = col_character()
 train_x <- read_csv("airbnb_train_x.csv")
 train_y <- read_csv("airbnb_train_y.csv")
+
+train_x <- airbnb_train_x
+train_y <- airbnb_train_y
+test_x <- airbnb_test_x
+
 # merge features and label
 df <- merge(train_x, train_y, by.x = 'X1', by.y = 'X1')
 
+train <- train_x
+test <- test_x
+
 # Merge df with zipcode dataframe that contains 'density' and 'density_bins'(4 bins)
 zipcode_1 <- read_csv("zipcode_combin_train.csv")
+zipcode_1 <- zipcode_combin_train
 zipcode_1$X1 <- zipcode_1$X1+1
-df <- merge(df, zipcode_1, by.x = 'X1', by.y = 'X1')
+df <- merge(train, zipcode_1, by.x = 'X1', by.y = 'X1')
 
 #testing set
-df_test <- read_csv("airbnb_test_x.csv")
+test_x <- read_csv("airbnb_test_x.csv")
 zipcode_2 <- read_csv("zipcode_combin_test.csv")
+zipcode_2 <- zipcode_combin_test
 zipcode_2$X1 <- zipcode_2$X1+1
-df_test <- merge(df_test, zipcode_2, by.x = 'X1', by.y = 'X1')
+df_test <- merge(test, zipcode_2, by.x = 'X1', by.y = 'X1')
 
-library(gtools)
+df$Train <- 1
+df_test$Train <- 0 
 
-df_whole <- smartbind(df, df_test)
+df_whole <- rbind(df, df_test)
 #View(df_whole)
 #View(df_whole)
-nrow(df_whole) #112208
+nrow(df_whole) ## nrow = 112208
 
 #write.csv(df_whole,file = "df_whole.csv",row.names = FALSE)
-colnames(df_whole)
-View(df_whole)
+
 df_whole$density_10bins <- cut(df_whole$density, 10, include.lowest=TRUE, labels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+
 # convert data type
 df_whole$density_bins <- as.factor(df_whole$density_bins) # convert to factor
-df_whole$high_booking_rate <- as.factor(df_whole$high_booking_rate)
 
-library(stringr)
-(which(str_detect(rownames(df_whole),"2:")))
+new_train$high_booking_rate <- as.factor(new_train$high_booking_rate)
 
-df_train <-df_whole[which(str_detect(rownames(df_whole),"2:")),]
-nrow(df_train)
+df <- df_whole
+
 #one hot encode these
 df$density_10bins0 <- ifelse(df$density_10bins == 0,1,0)
 df$density_10bins1 <- ifelse(df$density_10bins == 1,1,0)
@@ -58,11 +70,20 @@ df$density_10bins7 <- ifelse(df$density_10bins == 7,1,0)
 df$density_10bins8 <- ifelse(df$density_10bins == 8,1,0)
 df$density_10bins9 <- ifelse(df$density_10bins == 9,1,0)
 
-nrow(df) #112208
+nrow(df) ## 112208
 
 # 1. custom functions for convenience
 # check function: to check for na values, unique values, and data type
 check <- function(x){
+  uni <- unique(x)
+  na <- sum(is.na(x))
+  dtype <- class(x)
+  cat("NA:", na, "\n")
+  cat("unique Values:", uni, "\n")
+  cat(dtype)
+}
+
+checkall <- function(x){
   uni <- unique(x)
   na <- sum(is.na(x))
   dtype <- class(x)
@@ -106,7 +127,7 @@ add <- function(var){
 
 
 # calculate mode
-Mode <- function(x) {
+Mode <- function(x){
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }
@@ -128,29 +149,39 @@ selected <- add('density_10bins8')
 selected <- add('density_10bins9')
 selected<-add("density")
 selected<-add("density_bins")
-selected<-add("density_10bins")
+selected<-add("density_10bins") ## ???
 
 # var1 Access
-check(df$access)
+# checkall(df$access)
 df$access <- ifelse(is.na(df$access)== FALSE, 1, 0)
 selected <- add('access')
+
+## NA: 38757
 
 
 # var2 accommodates---------------
 ### Remove 9 bad recoreds
-df <- remove(df$accommodates)
+## df <- remove(df$accommodates) ***
 nrow(df)
 selected <- add('accommodates') # using custom function to add variable name to list, meaning that we will select this as our feature
+checkall(df$accommodates)
+df$accommodates <- as.numeric(df$accommodates)
 
-#imputing high_booking_rate
-df$high_booking_rate<-impute(df$high_booking_rate,value = 1)
+## NA:9
+## After converting into numeric, the NA increases to 11
+df$accommodates <- impute(df$accommodates,value = 3.506)
+## impute the 11 NAs with 3.506
+
+
+# imputing high_booking_rate ***
+# df$high_booking_rate<-impute(df$high_booking_rate,value = 1) ****
 
 
 # var3 amenities---------------
-#creating the var72 amenities_count from the variable amenities
+# creating the var72 amenities_count from the variable amenities
 corpus <- (VectorSource(df$amenities))
 corpus <- Corpus(corpus)
-#summary(corpus)
+# summary(corpus)
 vectored <-c()
 #length(corpus)
 #i=0
@@ -169,15 +200,27 @@ for (i in c(1:length(df$amenities))){
 df$amenities_count <- vectored
 selected<- add('amenities_count')
 
+## NA:0
+
 # 4 availablity_30--------------
+df$availability_30 <- as.numeric(df$availability_30)
+checkall(df$availability_30)
+
+## NA:11
+summary(df$availability_30)
+df$availability_30 <- impute(df$availability_30)
 selected <-add('availability_30')
 
 # 5 availability_365---------------
 #making changes to availability_60 and avail_90 to make them independent of availabi_30 and so on
+df$availability_90 <- as.numeric(df$availability_90)
+df$availability_90 <- impute(df$availability_90)
 df$availability_365 <- df$availability_365-df$availability_90
 selected <-add('availability_365')
 
 # var6 availability_60
+df$availability_60 <- as.numeric(df$availability_60)
+df$availability_60 <- impute(df$availability_60)
 df$availability_60 <- df$availability_60 - df$availability_30
 selected <-add('availability_60')
 
@@ -188,25 +231,30 @@ selected <-add('availability_90')
 # var8 bathrooms---------------
 ##replacing all character data in bathrooms column with the mean(rounded)
 # check the mean
-mean(df$bathrooms, na.rm = TRUE) # mean is 1.28, and we will round to 1.5
-df$bathrooms <- impute(df$bathrooms, value = 1.5)
+mean(df$bathrooms, na.rm = TRUE) # mean is 1.286
+df$bathrooms <- as.numeric(df$bathrooms)
+df$bathrooms <- impute(df$bathrooms)
 selected <- add('bathrooms')
 
 # var9 bed_type---------------
 # create new var70 : Real_Bed
 df['Real_Bed'] <- ifelse(df$bed_type=='Real Bed',1,ifelse(df$bed_type=='Pull-out',1,0))
+md <- Mode(df$Real_Bed)
+df$Real_Bed[is.na(df$Real_Bed)==TRUE] <- md
 selected <- add('Real_Bed')
 
 # var10 bedrooms---------------
 ## impute 92 NA with mean, and roundup to no decimals
-df$bedrooms <- impute(df$bedrooms, roundup = TRUE)
+df$bedrooms <- as.numeric(df$bedrooms)
+df$bedrooms <- impute(df$bedrooms)
 selected <- add('bedrooms')
 
 
 
 # 11 beds---------------
 ## impute 83 NA with mean, and roundup to no decimals
-df$beds <- impute(df$beds, roundup = TRUE)
+df$beds <- as.numeric(df$beds)
+df$beds <- impute(df$beds)
 selected <- add('beds')
 
 
@@ -243,11 +291,8 @@ df$cleaning_fee<- impute(df$cleaning_fee, value = 0)
 selected <- add('cleaning_fee')
 
 
-# 17 country_code---------------
-## removed 3 rows where country not US
-df <- df[which(df$country_code == 'US'),]
-nrow(df)
 # 18 description
+install.packages("ngram")
 library(ngram)
 df$description_wcount <- sapply(df$description, wordcount)
 selected <- add('description_wcount')
@@ -305,7 +350,8 @@ selected <- add('host_is_superhost')
 
 # 28 host_listings_count---------------
 ### impute na with mean(round)
-df$host_listings_count <- impute(df$host_listings_count, roundup = TRUE)
+df$host_listings_count <- as.numeric(df$host_listings_count)
+df$host_listings_count <- impute(df$host_listings_count)
 check(df$host_listings_count)
 selected <- add('host_listings_count')
 
@@ -313,7 +359,7 @@ selected <- add('host_listings_count')
 # 32 host_response_rate (15793 NA)---------------
 ## remove % sign, and impute rounded mean, and divide by 100. 
 df$host_response_rate <- as.numeric(gsub("\\%", '', df$host_response_rate)) # remove % sign
-df$host_response_rate <- impute(df$host_response_rate, roundup = TRUE)
+df$host_response_rate <- impute(df$host_response_rate)
 df$host_response_rate <- df$host_response_rate/100
 check(df$host_response_rate)
 selected <- add('host_response_rate')
@@ -342,8 +388,10 @@ df$host_since <- as.Date(df$host_since, origin="1960-10-01")
 df$experience <- difftime(Sys.Date(), df$host_since)
 df$experience <- as.integer(df$experience)
 check(df$experience)
+df$experience <- impute(df$experience)
 df$experience <- scale(df$experience)
-df<- remove(df$experience)  
+
+## df<- remove(df$experience)  
 nrow(df$experience)
 selected <- add('experience')
 
@@ -391,6 +439,11 @@ selected <- add('minimum_nights')
 Mode(df$minimum_nights)
 check(df$minimum_nights)
 df$minimum_nights <- impute(df$minimum_nights,value = 1)
+mean(df$minimum_nights[df$minimum_nights<=30])
+#df[df$minimum_nights<=30,]
+#df$minimum_nights[df$minimum_nights<=30]
+df$minimum_nights[df$minimum_nights >30] <- 30
+
 
 # 54 price---------------
 ## remove dollar sign and impute 573 NAs with mean
@@ -461,6 +514,7 @@ selected <- add('requires_license')
 #colnames(temp)[1] <- 'roomEntire_home_apt'
 #df <- cbind(df, temp)
 
+install.packages("mltools")
 library(mltools)
 library(data.table)
 #Impute 1 NA
@@ -489,38 +543,40 @@ check(df$security_deposit)
 selected <- add('security_deposit')
 
 #Bella ---------------
-df$price = as.numeric(gsub("[\\$,]", "", df$price))
-df$weekly_price = as.numeric(gsub("[\\$,]", "", df$weekly_price))
-df$monthly_price = as.numeric(gsub("[\\$,]", "", df$monthly_price))
-df$weekly_daily_price <- df$weekly_price/7
-df$monthly_daily_price <- df$monthly_price/30
-df$weekly_discount<-(df$weekly_daily_price-df$price)/(df$price)
-df$monthly_discount<-(df$monthly_daily_price-df$price)/(df$price)
+# df$price = as.numeric(gsub("[\\$,]", "", df$price))
+# df$weekly_price = as.numeric(gsub("[\\$,]", "", df$weekly_price))
+# df$monthly_price = as.numeric(gsub("[\\$,]", "", df$monthly_price))
+# df$weekly_daily_price <- df$weekly_price/7
+## NA:85144
+# df$monthly_daily_price <- df$monthly_price/30
+## NA:89067
+# df$weekly_discount<-(df$weekly_daily_price-df$price)/(df$price)
+# df$monthly_discount<-(df$monthly_daily_price-df$price)/(df$price)
 
-week_mean<-mean(df$weekly_discount,na.rm=TRUE) # 0.9529783
-month_mean<-mean(df$monthly_discount,na.rm=TRUE) # 0.756274
+# week_mean<-mean(df$weekly_discount,na.rm=TRUE) # 0.9529783
+# month_mean<-mean(df$monthly_discount,na.rm=TRUE) # 0.756274
 
-week_median<-median(df$weekly_discount,na.rm=TRUE) #0.9108341
-month_median<-median(df$monthly_discount,na.rm=TRUE) #0.7272727
+# week_median<-median(df$weekly_discount,na.rm=TRUE) #0.9108341
+# month_median<-median(df$monthly_discount,na.rm=TRUE) #0.7272727
 
-df$weekly_suitable<-ifelse(df$weekly_discount<=(week_median+week_mean)/2,0,1)
-df$monthly_suitable<-ifelse(df$monthly_discount<=(month_median+month_mean)/2,0,1)
+# df$weekly_suitable<-ifelse(df$weekly_discount<=(week_median+week_mean)/2,0,1)
+# df$monthly_suitable<-ifelse(df$monthly_discount<=(month_median+month_mean)/2,0,1)
 
-df$weekly_suitable[is.na(df$weekly_suitable)] = 0
-df$monthly_suitable[is.na(df$monthly_suitable)] = 0
-df$weekly_suitable<- as.character(df$weekly_suitable)
-df$monthly_suitable<- as.character(df$monthly_suitable)
+# df$weekly_suitable[is.na(df$weekly_suitable)] = 0
+# df$monthly_suitable[is.na(df$monthly_suitable)] = 0
+# df$weekly_suitable<- as.character(df$weekly_suitable)
+# df$monthly_suitable<- as.character(df$monthly_suitable)
 
-df$weekly_discount[is.na(df$weekly_discount)] = 0
-df$monthly_discount[is.na(df$monthly_discount)]=0
-df$weekly_discount<-scale(df$weekly_discount)
-df$monthly_discount<-scale(df$monthly_discount)
+# df$weekly_discount[is.na(df$weekly_discount)] = 0
+# df$monthly_discount[is.na(df$monthly_discount)]=0
+# df$weekly_discount<-scale(df$weekly_discount)
+# df$monthly_discount<-scale(df$monthly_discount)
 
-nrow(df) # 12208
-selected <- add('monthly_discount')
-selected <- add('weekly_discount')
-selected <- add('monthly_suitable')
-selected <- add('weekly_suitable')
+# nrow(df) # 12208
+# selected <- add('monthly_discount')
+# selected <- add('weekly_discount')
+# selected <- add('monthly_suitable')
+# selected <- add('weekly_suitable')
 
 #---Queenie------------------------
 #Importing the libraries
@@ -724,11 +780,13 @@ selected<-add("price_propertyApartment")
 selected<-add("price_roomPrivate_room")
 
 #Adding latitude and longitude
+df$latitude <- as.numeric(df$latitude)
+df$longitude <- as.numeric(df$longitude)
 df$latitude <- impute(df$latitude)
 df$longitude <- impute(df$longitude)
 selected <- add("latitude")
 selected <-add("longitude")
-which(is.na(df$longitude))
+
 df$average_price_per_person <- (df$price/df$guests_included)
 check(df$average_price_per_person)
 selected <- add("average_price_per_person")
@@ -738,10 +796,10 @@ df$security_deposit <- impute(df$security_deposit,value = 0)
 selected <- add("security_deposit")
 
 
-#Adding maximum_nights
-df$maximum_nights <- impute(df$maximum_nights)
-check(df$maximum_nights)
-selected <- add("maximum_nights")
+# Adding maximum_nights
+# df$maximum_nights <- impute(df$maximum_nights)
+# check(df$maximum_nights)
+# selected <- add("maximum_nights")
 
 #Adding market_popularity
 market_list <- NULL
@@ -787,7 +845,7 @@ if(FALSE){
 #selected <- c(selected, selected_zip) -> train_cleaned8
 selected<-add("density")#-> for train_cleaned9
 print(selected)
-length(selected) # 106
+length(selected) # 106 -> 100
 
 nrow(df)
 check(df$experience)
@@ -808,6 +866,34 @@ write.csv(export_train, file="train_cleaned18.csv", row.names = FALSE) #Write da
 
 
 
+train_df <- subset(df, df$Train==1)
+test_df <- subset(df,df$Train==0)
+
+train_df <- train_df[order(train_df$X1),]
+test_df <- test_df[order(test_df$X1),]
+
+new_train <- merge(train_df, train_y, by = 'X1')
+
+# Remove NAs in the high_booking_rate
+new_train <- new_train[which(is.na(new_train$high_booking_rate)==FALSE),]
+
+# Make the target variable into a factor
+new_train$high_booking_rate <- as.factor(new_train$high_booking_rate)
+
+
+# 17 country_code---------------
+## removed 3 rows where country not US
+new_train <- new_train[which(new_train$country_code == 'US'),]
+nrow(new_train)
+
+# Export the data --------------
+export_train <- new_train[selected]
+
+selected1 <- selected[-2]
+export_test <- test_df[selected1]
+
+setwd("C:\\Users\\16971\\Downloads")
+write.csv(export_test,'test54.csv',row.names = TRUE)
 
 
 
