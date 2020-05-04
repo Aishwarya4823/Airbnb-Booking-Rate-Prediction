@@ -29,7 +29,7 @@ names(df_test)
 df_test$density_10bins <- cut(df_test$density, 10, include.lowest=TRUE, labels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 # convert data type
 df_test$density_bins <- as.factor(df_test$density_bins) # convert to factor
-
+#check(df$density_bins)
 selected_zip <- c('density', 'density_bins', 'density_10bins') # add to selected features list later
 
 
@@ -394,7 +394,7 @@ selected_test <- add_test('experience')
 ## imupte 21 NA with rounded mean from test data
 #df_test$experience <- impute(df_test$experience, roundup = TRUE)
 
-write.csv(df_test,file="take5.csv",row.names = FALSE)
+#write.csv(df_test,file="take5.csv",row.names = FALSE)
 # 38 instant_bookable---------------
 ## convert to numeric 1,0 
 ## impute 3 NAs
@@ -441,7 +441,7 @@ check(df_test$minimum_nights)
 df_test$minimum_nights <- impute(df_test$minimum_nights, value = 1)
 selected_test <- add_test('minimum_nights')
 
-write.csv(df_test,file = "take6.csv",row.names = FALSE)
+#write.csv(df_test,file = "take6.csv",row.names = FALSE)
 
 # 54 price---------------
 ## remove dollar sign and impute 573 NAs with mean
@@ -449,7 +449,7 @@ check(df_test$price)
 df_test$price = as.numeric(substring(as.character(df_test$price),2))
 df_test$price <- impute(df_test$price, value = 145)
 selected_test <- add_test('price')
-
+check(df_test$price)
 
 # 55 property_type---------------
 ## Property type: group into larger groups and onehotencode
@@ -718,7 +718,7 @@ selected_test <- add_test('smoking_allowed')
 selected_test <- add_test('accessible')
 selected_test <- add_test('event_suitable')
 
-write.csv(df_test,file = "take7.csv",row.names = FALSE)
+#write.csv(df_test,file = "take7.csv",row.names = FALSE)
 
 
 # house_rules-------------------
@@ -828,8 +828,8 @@ selected_test <- add_test("neighbourhood_restaurant")
 #Add city centrality 
 df_test$city_centrality <- ifelse(str_detect((df_test$neighborhood_overview),regex("center|center city|downtown",ignore.case = T))==TRUE,1,0)
 df_test$city_centrality <- impute(df_test$city_centrality, value =  0) # impute 2NAs with mode from test data
-sum(is.na(df$city_centrality))
-
+#sum(is.na(df$city_centrality))
+check(df_test$city_centrality)
 selected_test <- add_test("city_centrality")
 
 
@@ -842,7 +842,7 @@ km.out = kmeans(x=df_test.X,centers=5,nstart=10)
 }
 #---------------------------------
 
-write.csv(df_test,file = "take10.csv",row.names = FALSE)
+#write.csv(df_test,file = "take10.csv",row.names = FALSE)
 
 selected_test
 # check the features that we select to use
