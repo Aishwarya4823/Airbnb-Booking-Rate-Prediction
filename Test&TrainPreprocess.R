@@ -316,6 +316,7 @@ selected <- add('extra_people')
 
 # 22 guests_included---------------
 ## very clean but have to think about relationship with extra fee and accommodates
+df$guests_included[df$guests_included<=0] <- 1
 selected <- add('guests_included')
 
 # 23 host_about---------------
@@ -893,7 +894,7 @@ selected1 <- selected[-2]
 export_test <- test_df[selected1]
 
 setwd("C:\\Users\\16971\\Downloads")
-write.csv(export_test,'test54.csv',row.names = TRUE)
+write.csv(export_train,'train54.csv',row.names = TRUE)
 
 
 
