@@ -37,7 +37,7 @@ drop<- c("roomEntire_ home_apt","require_guest_profile_picture","require_guest_p
          "propertyHotel","weekly_discount","monthly_discount",
          "weekly_suitable","monthly_suitable","X1")
 drop <-c("X1","X1_1","city_centrality","neighbourhood_restaurant",
-         "maximum_nights")#,"roomShared_room","host_has_profile_pic",
+         "maximum_nights","num_listings")#,"roomShared_room","host_has_profile_pic",
          #"host_identity_verified","host_response_rate",
          #"propertyHotel","require_guest_phone_verification",
          #"require_guest_profile_picture","bed_linen",
