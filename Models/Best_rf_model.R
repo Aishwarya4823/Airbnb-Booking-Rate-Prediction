@@ -6,10 +6,10 @@ library(ROCR)
 set.seed(12345)
 
 
-df <- read_csv("train_cleaned_1.csv")
+df <- read_csv("C:\\Users\\Aishwarya\\Documents\\GitHub\\Airbnb-New\\train54.csv")
 names(df)
 #df[,65:96] <- lapply(export_train[,65:96], factor)
-df[,1:90] <- lapply(df[,1:90], factor)
+#df[,1:90] <- lapply(df[,1:90], factor)
 
 
 ## Randomly partition the data into 30% validation data and the remaining 70% data.
@@ -36,7 +36,8 @@ View(df)
 drop<- c("roomEntire_ home_apt","require_guest_profile_picture","require_guest_phone_verification","host_has_profile_pic",
          "propertyHotel","weekly_discount","monthly_discount",
          "weekly_suitable","monthly_suitable","X1")
-drop <-c("X1")#,"roomShared_room","host_has_profile_pic",
+drop <-c("X1","X1_1","city_centrality","neighbourhood_restaurant",
+         "maximum_nights")#,"roomShared_room","host_has_profile_pic",
          #"host_identity_verified","host_response_rate",
          #"propertyHotel","require_guest_phone_verification",
          #"require_guest_profile_picture","bed_linen",
