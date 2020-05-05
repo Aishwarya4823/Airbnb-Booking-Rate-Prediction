@@ -23,7 +23,7 @@ which(is.na(df_train))
 df_train$high_booking_rate <- as.factor(df_train$high_booking_rate)
 df_valid$high_booking_rate <- as.factor(df_valid$high_booking_rate)
 
-
+View(df_valid)
 names(df_train)
 df_train$density_10bins<- as.factor(df_train$density_10bins)
 df_valid$density_10bins <- as.factor(df_valid$density_10bins)
@@ -77,11 +77,11 @@ model <- train(
   tuneLength = 1,
   data = df_train, 
   method = "ranger",
-  trControl = trainControl(
-    method = "cv", 
-    number = 5, 
-    verboseIter = TRUE
-  )
+  #trControl = trainControl(
+  #  method = "cv", 
+  #  number = , 
+  #  verboseIter = TRUE
+  #)
 )
 
 print(model)
