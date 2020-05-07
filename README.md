@@ -13,7 +13,7 @@ For this dataset, we tried the following four models with their accuracies liste
 |Random Forest           |                   |
 |XG Boost                |                   |
 
-The best model, as we can see, is the Random Forest model with a validation accuracy of  .
+The best model, as we can see, is the Random Forest model with a validation accuracy of 85.16%.
 
 Following is my contribution to the project :
 
