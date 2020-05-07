@@ -1,6 +1,6 @@
-## *Airbnb-Booking-Rate-Prediction*
+## _Airbnb-Booking-Rate-Prediction_
 
-Hi there!! Welcome to this part of the story:) In this repository, me and my team outperformed 19 other teams(85 other students) and won a Kaggle-style competition that our amazing professor,Dr. Jessica Clark, organised using Airbnb's dataset for high booking rate.This dataset has a total of 70 feature attributes. Our goal as a team of 5 students and a part of the Data Mining and Predictive Analytics course, during the period of this 2 month competition, was to come up with a predictive model using any machine learning technique to score the highest accuracy. 
+Hi there!! Welcome to this part of the story:) In this repository, me and my team outperformed 19 other teams(85 other students) and won a Kaggle-style competition that our amazing professor,Dr. Jessica Clark, organised using using Airbnb's dataset for high booking rate.This dataset has a total of 70 feature attributes. Our goal as a team of 5 students and a part of the Data Mining and Predictive Analytics course, during the period of this 2 month competition, was to come up with a predictive model using any machine learning technique to score the highest accuracy. 
 
 ------------------------------------
 
@@ -39,4 +39,4 @@ Lastly, I would like to thank my professor and my four team members
 3) **Jiakun Luo**
 4) **Wenjing Cui**
 
-Without these beautiful people, this memory would not have been created! I hope you like this project:D
+Without these beautiful people, this memory would not have been created! I hope you like this chapter:D 
