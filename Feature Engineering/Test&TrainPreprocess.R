@@ -374,7 +374,7 @@ selected <- add('host_response_time')
 ## create New var 71 experience
 ## transform the "host_since" column to time difference
 ## remove 142 NA in df$experience, this also might affect other columns with 142 NAs
-df$host_since <- as.Date(df$host_since, origin="1960-10-01")
+df$host_since <- as.Date(df$host_since, origin="2000-10-01")
 df$experience <- difftime(Sys.Date(), df$host_since)
 df$experience <- as.integer(df$experience)
 check(df$experience)
