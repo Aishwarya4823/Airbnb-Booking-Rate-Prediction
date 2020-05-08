@@ -10,8 +10,8 @@ For this dataset, we tried the following four models with their accuracies liste
 |------------------------|-------------------|
 |Logistic Regression     |                   |
 |K-Nearest Neighbours    |                   |
-|Random Forest           |                   |
-|XG Boost                |                   |
+|Random Forest           |   0.8380622       |
+|XG Boost                |   0.8451639       |
 
 The best model, as we can see, is the Random Forest model with a validation accuracy of 85.16%.
 
