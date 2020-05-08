@@ -10,8 +10,8 @@ For this dataset, we tried the following four models with their accuracies liste
 |------------------------|-------------------|
 |Logistic Regression     |                   |
 |K-Nearest Neighbours    |                   |
-|Random Forest           |                   |
-|XG Boost                |                   |
+|Random Forest           |   0.8380622       |
+|XG Boost                |   0.8451639       |
 
 The best model, as we can see, is the Random Forest model with a validation accuracy of 85.16%.
 
@@ -21,7 +21,7 @@ Following is my contribution to the project :
 2) Building K-Nearest Neighbours model.
 3) Hyper parameter tuning to find the best "k" value
 4) Building the Random Forest model (using traditional RandomForest library and the new Caret Library)
-5) Hyper parameter tuning of the Random Forest model (mtry = 14)
+5) Hyper parameter tuning of the Random Forest model (mtry = 14) and 5-fold cross validation
 
 ## Overview
 
