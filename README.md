@@ -8,7 +8,8 @@ For this dataset, we tried the following four models with their accuracies liste
 
 |   Model                |Validation Accuracy|
 |------------------------|-------------------|
-|Logistic Regression     |                   |
+|Logistic Regression     |   0.7929503       |
+|Naive Bayes Model       |                   |
 |K-Nearest Neighbours    |                   |
 |Random Forest           |   0.8380622       |
 |XG Boost                |   0.8451639       |
