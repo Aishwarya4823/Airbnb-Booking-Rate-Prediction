@@ -21,7 +21,7 @@ Following is my contribution to the project :
 2) Building K-Nearest Neighbours model.
 3) Hyper parameter tuning to find the best "k" value
 4) Building the Random Forest model (using traditional RandomForest library and the new Caret Library)
-5) Hyper parameter tuning of the Random Forest model (mtry = 14)
+5) Hyper parameter tuning of the Random Forest model (mtry = 14) and 5-fold cross validation
 
 ## Overview
 
