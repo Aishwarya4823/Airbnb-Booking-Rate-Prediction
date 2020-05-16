@@ -6,7 +6,7 @@ Hi there!! In this repository, me and my team outperformed 19 other teams(85 oth
 
 For this dataset, we tried the following four models with their accuracies listed as below 
 
-|   Model                |Validation Accuracy|
+|   Model                |Test Accuracy|
 |------------------------|-------------------|
 |Logistic Regression     |   0.7929503       |
 |Naive Bayes Model       |   0.7743653       |
